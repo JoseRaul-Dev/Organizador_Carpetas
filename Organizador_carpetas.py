@@ -1,28 +1,106 @@
+"""
+Organizador automático de carpetas.
+Este programa se encarga de clasificar los archivos de una carpeta y subcarpetas según su extensión.
+"""
+
 import os
 import shutil
 from rich.console import Console
 from rich.panel import Panel
+from rich.prompt import Prompt
 
 consola=Console()
 
 def mostrar_Cabecera(consola):
+    """
+    Este método se encarga de tener la cabecera de nuestra aplicación.
+    """
+
     consola.print(Panel("[bold blue]Clasificación de archivos[/bold blue]",title="[bold blue]Organizador de carpetas[/bold blue]",border_style="bold blue"))
     
+
 def obtener_extension(nombre_archivo):
+    """
+    Este método obtiene la extensión de un archivo y la devuelve en minúsculas. 
+    En el caso de que el archivo no tenga extensión, devuelve "sin extension".
+    """
+    
+    # Separamos el nombre del archivo y su extensión.
     _, extension = os.path.splitext(nombre_archivo)
+    
+    # Comprobamos si el archivo tiene extensión, si no la tiene devolvemos sin extension.
     if extension:
         return extension [1:].lower()
     return "sin extension"
 
-def tamano_legible(tamano_bytes):
+def tamano_legible(tamano_bytes): 
+    """
+    Este método se encarga de convertir el tamaño recibido en la unidad más adecuada.
+    """
+    
     unidades = ["bytes", "KB", "MB", "GB"]
     tamaño = float(tamano_bytes)
     indice = 0
     
+    # Dividimos el tamaño  recibido entre 1024 hasta que encontremos la unidad adecuada.
     while tamaño >= 1024 and indice < len(unidades) - 1:
         tamaño /= 1024
         indice += 1
     
+    # Devolvemos el tamaño del archivo y su unidad.
     if indice == 0:
         return f"{int(tamaño)} {unidades[indice]}"
     return f"{tamaño :.2f} {unidades[indice]}"
+
+def una_dentro_de_otra(ruta_1,ruta_2):
+    
+    """
+    Este método comprueba si dos rutas son iguales o si una está dentro de otra.
+    """
+    
+    # Convertimos las dos rutas en rutas absolutas y normalizamos su formato.
+    ruta_1 = os.path.normcase(os.path.abspath (ruta_1))
+    ruta_2 = os.path.normcase(os.path.abspath (ruta_2))
+    
+    # Comprobamos si las dos rutas son iguales.
+    if ruta_1 == ruta_2:
+        return True
+    
+    # Comprobamos si la primera ruta está dentro de la segunda.
+    if ruta_1.startswith(ruta_2 + os.sep):
+        return True
+    
+    # Comprobamos si la segunda ruta está dentro de la primera.
+    if ruta_2.startswith(ruta_1 + os.sep):
+        return True
+    
+    return False
+
+def pedir_rutas(consola):
+    
+    """
+    Este método se encarga de solicitar al usuario las rutas de origen y destino.
+    """
+    
+    consola.print(Panel("[bold blue] Introduce la carpeta de origen y la carpeta de destino que vas a utilizar [/bold blue]", border_style="cyan"))
+    
+    # Pedimos las dos rutas y eliminamos espacios que sobren.
+    carpeta_origen=Prompt.ask("[blue] Carpeta de origen [/blue]",console=consola).strip()
+    carpeta_destino= Prompt.ask("[blue] Carpeta de destino [/blue]",console=consola).strip()
+    
+    # Este condicional comprueba si nuestra ruta de origen existe y es una carpeta.
+    if not os.path.isdir (carpeta_origen):
+        consola.print(Panel("[red] La carpeta de origen no existe o no es una carpeta.",title="Error",border_style="red"))
+        return None
+    
+    # Este condicional comprueba que la ruta de destino existe y si existe debe de ser una carpeta.
+    if os.path.exists(carpeta_destino) and not os.path.isdir(carpeta_destino):
+        consola.print(Panel("[red] La ruta de destino existe pero no es una carpeta.",title="Error",border_style="red"))
+        return None
+    
+    # Este condicional comprueba si el origen y el destino coinciden o si estan uno dentro del otro.
+    if una_dentro_de_otra (carpeta_origen, carpeta_destino):
+        consola.print(Panel("[red] El origen y el destino no pueden ser iguales ni tampoco puedes estar uno dentro del otro",title="Error",border_style="red"))
+        return None
+    
+    return carpeta_origen,carpeta_destino
