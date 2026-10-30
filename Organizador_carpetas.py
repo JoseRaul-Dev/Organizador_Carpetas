@@ -104,3 +104,32 @@ def pedir_rutas(consola):
         return None
     
     return carpeta_origen,carpeta_destino
+
+def nombre_disponible (ruta_destino, nombre_archivo):
+    """
+    Este método comprueba si el nombre del archivo ya existe en la ruta de destino. 
+    Si existe se añade un número al nombre para que no sean iguales.
+    """
+    
+    # Unimos la ruta de destino con el nombre del archivo.
+    ruta= os.path.join(ruta_destino,nombre_archivo)
+    
+    # Comprobamos si el archivo ya existe.
+    if not os.path.exists(ruta):
+        return ruta
+    
+    # Separamos el nombre del archivo y su extensión.
+    nombre, extension = os.path.splitext(nombre_archivo)
+    contador = 1
+
+    # Se van modificando los nombres hasta que se encuentre uno disponible.
+    while True:
+        n_nombre = f"{nombre}_{contador}{extension}"
+        n_ruta = os.path.join(ruta_destino,n_nombre)
+        
+        # Comprobamos si el nombre nuevo está libre.
+        if not os.path.exists(n_ruta):
+            return n_ruta
+        
+        # Vamos aumentando el contador para probar con otro nombre diferente.
+        contador += 1
