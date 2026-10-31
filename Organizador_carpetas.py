@@ -11,8 +11,7 @@ from rich.prompt import Prompt
 
 consola=Console()
 
-def main():
-    
+def main():    
     """
     Este es el método principal de nuestro programa en el que llamaremos a las funciones.
     """
@@ -85,8 +84,7 @@ def una_dentro_de_otra(ruta_1,ruta_2):
     
     return False
 
-def pedir_rutas(consola):
-    
+def pedir_rutas(consola):  
     """
     Este método se encarga de solicitar al usuario las rutas de origen y destino.
     """
@@ -146,7 +144,7 @@ def nombre_disponible (ruta_destino, nombre_archivo):
 def clasificar_archivo(ruta_origen,nombre_archivo,ruta_destino, historial):
     """
     Este método se encarga de mover un archivo a una subcarpeta que se corresponde con la extensión que tenga.
-    Guarda el movimiento que hemos hecho en el historial
+    Guarda el movimiento que hemos hecho en el historial.
     """
     
     # Juntamos la ruta del origen con el nombre del archivo.
@@ -175,3 +173,27 @@ def clasificar_archivo(ruta_origen,nombre_archivo,ruta_destino, historial):
     
     # Devolvemos el tamaño del archivo.
     return tamaño
+
+def clasificar_carpeta_recursivo(ruta_actual,ruta_destino, historial):
+    """
+    Este método recorre la carpeta de origen y todas las subcarpeta para clasificar los archivos que vaya encontrando.
+    Devuelve el tamaño total de los archivos.
+    """
+    
+    # Inicializamos el tamaño total de los archivos.
+    total = 0
+    
+    # Recorremos todos los elementos que hay dentro de la carpeta actual.
+    for archivo in os.listdir(ruta_actual):
+        ruta_archivos = os.path.join(ruta_actual,archivo)
+        
+        # Si el elemento es una carpeta, entramos en ella utilizando la recursividad
+        if os.path.isdir(ruta_archivos):
+            total += clasificar_carpeta_recursivo(ruta_archivos,ruta_destino,historial)
+        
+        # Si el elemento es un archivo, lo clasificamos llamando al método clasificar_archivo.
+        elif os.path.isfile(ruta_archivos):
+            total += clasificar_archivo(ruta_actual,archivo,ruta_destino,historial)
+
+    # Devolvemos el tamaño total de los archivos clasificados.
+    return total    
