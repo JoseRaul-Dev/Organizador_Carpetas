@@ -11,6 +11,15 @@ from rich.prompt import Prompt
 
 consola=Console()
 
+def main():
+    
+    """
+    Este es el método principal de nuestro programa en el que llamaremos a las funciones.
+    """
+       
+    # Creamos la lista en la que guardaremos los movimientos del historial
+    historial = []
+
 def mostrar_Cabecera(consola):
     """
     Este método se encarga de tener la cabecera de nuestra aplicación.
@@ -133,3 +142,36 @@ def nombre_disponible (ruta_destino, nombre_archivo):
         
         # Vamos aumentando el contador para probar con otro nombre diferente.
         contador += 1
+    
+def clasificar_archivo(ruta_origen,nombre_archivo,ruta_destino, historial):
+    """
+    Este método se encarga de mover un archivo a una subcarpeta que se corresponde con la extensión que tenga.
+    Guarda el movimiento que hemos hecho en el historial
+    """
+    
+    # Juntamos la ruta del origen con el nombre del archivo.
+    ruta = os.path.join(ruta_origen,nombre_archivo)
+    
+    # Obtenemos la extensión del archivo.
+    extension = obtener_extension(nombre_archivo)
+    
+    # Creamos la variable con la ruta de la carpeta correspondiente a la extensión del archivo.
+    carpeta = os.path.join(ruta_destino,extension)
+    
+    # Creamos la carpeta si todavía no existe.
+    os.makedirs(carpeta,exist_ok=True)
+    
+    # Obtenemos el tamaño del archivo antes moverlo
+    tamaño = os.path.getsize(ruta)
+    
+    # Buscamos un nombre que este disponible.
+    ruta_n = nombre_disponible(carpeta,nombre_archivo)
+    
+    # Movemos el arhivo desde la ruta de origen a la ruta de destino
+    shutil.move(ruta,ruta_n)
+    
+    # Añadimos a la lista del historial el movimiento.
+    historial.append(f"{ruta} -> {extension}/{os.path.basename(ruta_n)}")
+    
+    # Devolvemos el tamaño del archivo.
+    return tamaño
