@@ -16,10 +16,48 @@ def main():
     """
     Este es el método principal de nuestro programa en el que llamaremos a las funciones.
     """
-       
+    
+    # Mostramos la cabecera del programa.
+    mostrar_Cabecera(consola)
+    
+    # Pedimos las rutas al usuario.
+    rutas = pedir_rutas(consola)
+    
+    # En el caso de que las rutas no sean válidas, salimos del programa.
+    if rutas is None:
+        return
+    
+    # Guardamos mediante estas variables la ruta de origen y la ruta de destino.
+    carpeta_origen, carpeta_destino = rutas
+    
     # Creamos la lista en la que guardaremos los movimientos del historial
     historial = []
-
+    
+    try:
+        # Comprobamos si la carpeta de origen está vacía, en el caso de que este vacia mostramos el error y finalizamos la aplicación.
+        if contar_archivos_recursivo(carpeta_origen) == 0:
+            consola.print(Panel("[bold red] La carpeta de origen esta vacía.[/bold red]",title="Error",border_style="red"))
+            return
+        
+        # Creamos la carpeta de destino si todavia no existe.
+        os.makedirs(carpeta_destino, exist_ok=True)
+        
+        consola.print(Panel("[blue] Clasificación terminada [/blue]"))
+        
+        # Recorremos la carpeta de origen y todas sus subcarpetas para clasificar los archivos que vayamos encontrando.
+        tamaño_total=clasificar_carpeta_recursivo(carpeta_origen,carpeta_destino,historial)
+        
+        # Contamos los archivos que quedan en la carpeta de origen y los que hay en la carpeta de destino.
+        archivos_origen = contar_archivos_recursivo(carpeta_origen)
+        archivos_destino = contar_archivos_recursivo(carpeta_destino)
+        
+        # Mostramos el informe con las dos tablas.
+        mostrar_informe(consola,historial,tamaño_total,archivos_origen,archivos_destino)
+        
+    # En el caso de que se produzca algún error, lo mostramos con este mensaje.
+    except OSError as e:
+        consola.print(Panel(f"[bold red] Se ha producido un error: {e} [/bold red]",title="Error",border_style="red"))
+               
 def mostrar_Cabecera(consola):
     """
     Este método se encarga de tener la cabecera de nuestra aplicación.
@@ -27,7 +65,6 @@ def mostrar_Cabecera(consola):
 
     consola.print(Panel("[bold blue]Clasificación de archivos[/bold blue]",title="[bold blue]Organizador de carpetas[/bold blue]",border_style="bold blue"))
     
-
 def obtener_extension(nombre_archivo):
     """
     Este método obtiene la extensión de un archivo y la devuelve en minúsculas. 
@@ -108,7 +145,7 @@ def pedir_rutas(consola):
     
     # Este condicional comprueba si el origen y el destino coinciden o si estan uno dentro del otro.
     if una_dentro_de_otra (carpeta_origen, carpeta_destino):
-        consola.print(Panel("[red] El origen y el destino no pueden ser iguales ni tampoco puedes estar uno dentro del otro",title="Error",border_style="red"))
+        consola.print(Panel("[red] El origen y el destino no pueden ser iguales ni tampoco puede estar la carpeta de destino dentro de la carpeta de origen.",title="Error",border_style="red"))
         return None
     
     return carpeta_origen,carpeta_destino
@@ -266,3 +303,7 @@ def mostrar_informe(consola,historial, tamano_total, archivos_origen, archivos_d
         
     # Mostramos la segunda tabla.
     consola.print(tabla2)
+    
+# Mediante este condicional ejecutamos el método main().
+if __name__ == "__main__":
+    main()
