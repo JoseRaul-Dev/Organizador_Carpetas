@@ -196,4 +196,28 @@ def clasificar_carpeta_recursivo(ruta_actual,ruta_destino, historial):
             total += clasificar_archivo(ruta_actual,archivo,ruta_destino,historial)
 
     # Devolvemos el tamaño total de los archivos clasificados.
-    return total    
+    return total   
+
+def contar_archivos_recursivo(ruta_actual):
+    """
+    Este método cuenta todos los archivos que hay en una carpeta y en sus subcarpetas mediante recursividad.
+    Devuelve el número total de los archivos que se han encontrado.
+    """
+    
+    # Inicializamos el contador de archivos.
+    contador = 0
+    
+    # Recorremos todos los archivos de la carpeta.
+    for archivo in os.listdir(ruta_actual):
+        ruta_archivos = os.path.join(ruta_actual,archivo)
+        
+        # En el caso de que sea una carpeta, entramos en ella y contamos también sus archivos mediante la recursividad.
+        if os.path.isdir(ruta_archivos):
+            contador+= contar_archivos_recursivo(ruta_archivos)
+            
+        # En el caso de que sea un archivo, vamos aumentando el contador.
+        elif os.path.isfile(ruta_archivos):
+            contador += 1
+            
+    # Devolvemos el número total de todos los archivos que hayamos encontrado.
+    return contador 
