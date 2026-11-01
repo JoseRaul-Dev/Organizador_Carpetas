@@ -8,6 +8,7 @@ import shutil
 from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import Prompt
+from rich.table import Table
 
 consola=Console()
 
@@ -92,8 +93,8 @@ def pedir_rutas(consola):
     consola.print(Panel("[bold blue] Introduce la carpeta de origen y la carpeta de destino que vas a utilizar [/bold blue]", border_style="cyan"))
     
     # Pedimos las dos rutas y eliminamos espacios que sobren.
-    carpeta_origen=Prompt.ask("[blue] Carpeta de origen [/blue]",console=consola).strip()
-    carpeta_destino= Prompt.ask("[blue] Carpeta de destino [/blue]",console=consola).strip()
+    carpeta_origen=Prompt.ask("[bold blue] Carpeta de origen [/bold blue]",console=consola).strip()
+    carpeta_destino= Prompt.ask("[bold blue] Carpeta de destino [/bold blue]",console=consola).strip()
     
     # Este condicional comprueba si nuestra ruta de origen existe y es una carpeta.
     if not os.path.isdir (carpeta_origen):
@@ -221,3 +222,47 @@ def contar_archivos_recursivo(ruta_actual):
             
     # Devolvemos el número total de todos los archivos que hayamos encontrado.
     return contador 
+
+def mostrar_informe(consola,historial, tamano_total, archivos_origen, archivos_destino):
+    """
+    Este método muestra el informe final con los archivos clasificado, sus movimientos y el tamaño total
+    """
+    
+    # Creamos la primera tabla con el informe final.
+    tabla1 = Table(title="Informe final")
+    tabla1.add_column("Concepto", style="white")
+    tabla1.add_column("Valor", style="bold cyan")
+    
+    # Añadimos las filas a la primera tabla.
+    tabla1.add_row("Archivos movidos", str(len(historial)))
+    
+    # Añadimos el tamaño total movido en caso de que el tamaño sea 0 el color sera verde y si es mayor de 0 sera en amarillo.
+    if tamano_total == 0:
+        tabla1.add_row("Tamaño total movido", f"[green]{tamano_legible(tamano_total)}[/green]")
+    else:
+        tabla1.add_row("Tamaño total movido",f"[yellow]{tamano_legible(tamano_total)}[/yellow]")
+    
+    # Si no quedan archivos en el origen, mostramos el valor en verde, en caso contrario en rojo
+    if archivos_origen == 0:
+        tabla1.add_row("Archivos que quedan en el origen", f"[bold green]{archivos_origen}[/bold green]")
+    else:
+        tabla1.add_row("Archivos que quedan en el origen", f"[bold red]{archivos_origen}[/bold red]")
+        
+    tabla1.add_row("Archivos en el destino (con subcarpetas)", f"[bold blue]{archivos_destino}[/bold blue]")
+    
+    # Mostramos la primera tabla.
+    consola.print(tabla1)
+    
+    # Creamos la segunda tabla con los movimientos que se han hecho.
+    tabla2 = Table(title="Movimientos realizados")
+    tabla2.add_column("Nº",style = "bold green")
+    tabla2.add_column("Origen -> Destino", style="white")
+    
+    # Recorremos la lista del historial y añadimos cada movimiento a la segunda tabla.
+    contador = 1
+    for movimiento in historial:
+        tabla2.add_row(str(contador),movimiento)
+        contador += 1
+        
+    # Mostramos la segunda tabla.
+    consola.print(tabla2)
