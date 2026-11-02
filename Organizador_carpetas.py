@@ -143,7 +143,7 @@ def pedir_rutas(consola):
     
     # Este condicional comprueba si el origen y el destino coinciden o si estan uno dentro del otro.
     if una_dentro_de_otra (carpeta_origen, carpeta_destino):
-        consola.print(Panel("[bold red] El origen y el destino no pueden ser iguales ni tampoco puede estar la carpeta de destino dentro de la carpeta de origen.",title="Error",border_style="boldred"))
+        consola.print(Panel("[bold red] El origen y el destino no pueden ser iguales ni tampoco puede estar la carpeta de destino dentro de la carpeta de origen.",title="Error",border_style="bold red"))
         return None
     
     return carpeta_origen,carpeta_destino
