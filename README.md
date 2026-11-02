@@ -21,5 +21,8 @@ Al finalizar, se muestran dos informes:
 - Informe final mediante tablas de Rich.
 - Control de errores mediante excepciones.
 
+## Pruebas
+Se incluye el archivo `Comprobar_tamano.py` para verificar el funcionamiento del método `tamano_legible()`. Para ello, se utilizan valores de prueba correspondientes a los límites de las distintas unidades (bytes, KB, MB y GB), incluyendo también el caso de 0 bytes.
+
 ## Autor
 **Realizado por José Raúl Álvarez**
