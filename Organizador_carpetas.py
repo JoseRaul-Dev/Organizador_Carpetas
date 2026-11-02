@@ -42,8 +42,6 @@ def main():
         # Creamos la carpeta de destino si todavia no existe.
         os.makedirs(carpeta_destino, exist_ok=True)
         
-        consola.print(Panel("[blue] Clasificación terminada [/blue]"))
-        
         # Recorremos la carpeta de origen y todas sus subcarpetas para clasificar los archivos que vayamos encontrando.
         tamaño_total=clasificar_carpeta_recursivo(carpeta_origen,carpeta_destino,historial)
         
@@ -63,7 +61,7 @@ def mostrar_Cabecera(consola):
     Este método se encarga de tener la cabecera de nuestra aplicación.
     """
 
-    consola.print(Panel("[bold blue]Clasificación de archivos[/bold blue]",title="[bold blue]Organizador de carpetas[/bold blue]",border_style="bold blue"))
+    consola.print(Panel("[bold green]Clasificación de archivos[/bold green]",title="[bold green]Organizador de carpetas[/bold green]",border_style="bold green"))
     
 def obtener_extension(nombre_archivo):
     """
@@ -127,7 +125,7 @@ def pedir_rutas(consola):
     Este método se encarga de solicitar al usuario las rutas de origen y destino.
     """
     
-    consola.print(Panel("[bold blue] Introduce la carpeta de origen y la carpeta de destino que vas a utilizar [/bold blue]", border_style="cyan"))
+    consola.print("[bold cyan] Introduce la carpeta de origen y la carpeta de destino que vas a utilizar [/bold cyan]")
     
     # Pedimos las dos rutas y eliminamos espacios que sobren.
     carpeta_origen=Prompt.ask("[bold blue] Carpeta de origen [/bold blue]",console=consola).strip()
@@ -135,17 +133,17 @@ def pedir_rutas(consola):
     
     # Este condicional comprueba si nuestra ruta de origen existe y es una carpeta.
     if not os.path.isdir (carpeta_origen):
-        consola.print(Panel("[red] La carpeta de origen no existe o no es una carpeta.",title="Error",border_style="red"))
+        consola.print(Panel("[bold red] La carpeta de origen no existe o no es una carpeta.[/bold red]",title="Error",border_style="bold red"))
         return None
     
     # Este condicional comprueba que la ruta de destino existe y si existe debe de ser una carpeta.
     if os.path.exists(carpeta_destino) and not os.path.isdir(carpeta_destino):
-        consola.print(Panel("[red] La ruta de destino existe pero no es una carpeta.",title="Error",border_style="red"))
+        consola.print(Panel("[bold red] La ruta de destino existe pero no es una carpeta.[/bold red]",title="Error",border_style="bold red"))
         return None
     
     # Este condicional comprueba si el origen y el destino coinciden o si estan uno dentro del otro.
     if una_dentro_de_otra (carpeta_origen, carpeta_destino):
-        consola.print(Panel("[red] El origen y el destino no pueden ser iguales ni tampoco puede estar la carpeta de destino dentro de la carpeta de origen.",title="Error",border_style="red"))
+        consola.print(Panel("[bold red] El origen y el destino no pueden ser iguales ni tampoco puede estar la carpeta de destino dentro de la carpeta de origen.",title="Error",border_style="boldred"))
         return None
     
     return carpeta_origen,carpeta_destino
@@ -275,9 +273,9 @@ def mostrar_informe(consola,historial, tamano_total, archivos_origen, archivos_d
     
     # Añadimos el tamaño total movido en caso de que el tamaño sea 0 el color sera verde y si es mayor de 0 sera en amarillo.
     if tamano_total == 0:
-        tabla1.add_row("Tamaño total movido", f"[green]{tamano_legible(tamano_total)}[/green]")
+        tabla1.add_row("Tamaño total movido", f"[bold green]{tamano_legible(tamano_total)}[/bold green]")
     else:
-        tabla1.add_row("Tamaño total movido",f"[yellow]{tamano_legible(tamano_total)}[/yellow]")
+        tabla1.add_row("Tamaño total movido",f"[bold yellow]{tamano_legible(tamano_total)}[/bold yellow]")
     
     # Si no quedan archivos en el origen, mostramos el valor en verde, en caso contrario en rojo
     if archivos_origen == 0:
